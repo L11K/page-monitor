@@ -77,13 +77,25 @@ class Scraper {
 
   // Write new data into MongoDB
   writeNewData(newData, callback) {
-    const scrapedData = ScraperData({
-      scraper: this.name,
-      oldData: newData,
-    });
+    ScraperData.findOne({ scraper: this.name }, (err, oldDoc) => {
+      if (err) {
+        callback(err);
+      } else {
+        let newDoc;
+        if (oldDoc) {
+          newDoc = oldDoc;
+          newDoc.oldData = newData;
+        } else {
+          newDoc = ScraperData({
+            scraper: this.name,
+            oldData: newData,
+          });
+        }
 
-    scrapedData.save((err) => {
-      callback(err);
+        newDoc.save((err) => {
+          callback(err);
+        });
+      }
     });
   }
 
@@ -103,15 +115,19 @@ class Scraper {
             this.report(err);
           }
 
-          const diff = this.diff(oldData, newData);
-          // console.log(diff);
-          if (Object.keys(diff) > 0) {
-            const { subject, body } = this.formatEmail(diff);
-            Scraper.sendEmail(subject, body);
-          } else {
-            console.log('No differences found.');
-          }
-          callback();
+          this.diff(oldData, newData, (err, diff) => {
+            if (err) {
+              this.report(err);
+            }
+
+            if (Object.keys(diff).length > 0) {
+              const { subject, body } = this.formatEmail(diff);
+              Scraper.sendEmail(subject, body);
+            } else {
+              console.log('No differences found.');
+            }
+            callback();
+          });
         });
       });
     });

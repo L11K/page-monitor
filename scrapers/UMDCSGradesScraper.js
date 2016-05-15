@@ -98,15 +98,16 @@ class UMDCSGradesScraper extends Scraper {
 
   // Check if the data scraped from the CS grade server has changed
   // Format the changes with messages to be sent in a notification
-  diff(oldData, newData) {
+  diff(oldData, newData, callback) {
     const changes = {};
-    async.each(Object.keys(newData), (className) => {
+    async.each(Object.keys(newData), (className, cb) => {
       const classChanges = [];
       const oldClassData = className in oldData ? oldData[className] : {};
       const newClassData = className in newData ? newData[className] : {};
       // Check if the final grade changed
       if (newClassData.finalLetter && !oldClassData.finalLetter ||
-        newClassData.finalLetter !== oldClassData.finalLetter) {
+        (newClassData.finalLetter && oldClassData.finalLetter &&
+        newClassData.finalLetter !== oldClassData.finalLetter)) {
         const oldLetterGrade = oldClassData.finalLetter ? oldClassData.finalLetter : 'N/A';
         const newLetterGrade = newClassData.finalLetter ? newClassData.finalLetter : 'N/A';
         classChanges.push(
@@ -115,7 +116,8 @@ class UMDCSGradesScraper extends Scraper {
 
       // Check if the final percent changed
       if (newClassData.finalPercent && !oldClassData.finalPercent ||
-        newClassData.finalPercent !== oldClassData.finalPercent) {
+        (newClassData.finalPercent && oldClassData.finalPercent &&
+        newClassData.finalPercent !== oldClassData.finalPercent)) {
         const oldPercent = oldClassData.finalPercent ? oldClassData.finalPercent : 'N/A';
         const newPercent = newClassData.finalPercent ? newClassData.finalPercent : 'N/A';
         classChanges.push(
@@ -142,9 +144,10 @@ ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
       if (classChanges.length > 0) {
         changes[className] = classChanges;
       }
+      cb();
+    }, (err) => {
+      callback(err, changes);
     });
-
-    return changes;
   }
 
   // From a diff, create an email message to be sent as a notification
