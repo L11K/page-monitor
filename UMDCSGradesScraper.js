@@ -1,7 +1,6 @@
 const Scraper = require('./Scraper');
 const async = require('async');
 const cheerio = require('cheerio');
-const tidy = require('htmltidy').tidy;
 
 // Class to scrape the UMD CS grades page:
 // https://grades.cs.umd.edu
@@ -47,39 +46,36 @@ class UMDCSGradesScraper extends Scraper {
               if (err) {
                 callback(err);
               } else {
-                // The UMD CS grade server has REALLY bad HTML
-                tidy(resp.text, (err, html) => {
-                  // Find each assignment from the grades table
-                  const $ = cheerio.load(html);
-                  const grades = [];
-                  let finalPercent = undefined;
-                  $($($('table').get(2)).find('tr')).each((i, elem) => {
-                    if (i !== 0) {
-                      const grade = {};
-                      grade.title = $($(elem).find('td').get(0)).text();
-                      grade.score = $($(elem).find('td').get(1)).text();
-                      grade.maxscore = $($(elem).find('td').get(2)).text();
-                      grade.comment = $($(elem).find('td').get(4)).text();
-                      if (grade.title === 'Total') {
-                        finalPercent = grade.score;
-                      } else {
-                        grades.push(grade);
-                      }
+                // Find each assignment from the grades table
+                const $ = cheerio.load(resp.text);
+                const grades = [];
+                let finalPercent = undefined;
+                $($($('table').get(2)).find('tr')).each((i, elem) => {
+                  if (i !== 0) {
+                    const grade = {};
+                    grade.title = $($(elem).find('td').get(0)).text().trim();
+                    grade.score = $($(elem).find('td').get(1)).text().trim();
+                    grade.maxscore = $($(elem).find('td').get(2)).text().trim();
+                    grade.comment = $($(elem).find('td').get(4)).text().trim();
+                    if ($(elem).html().match('<b>Total')) {
+                      finalPercent = grade.score;
+                    } else {
+                      grades.push(grade);
                     }
-                  });
-
-                  // Find the final grade, if it exists
-                  let finalLetter = undefined;
-                  $('p').each((i, elem) => {
-                    const text = $(elem).text();
-                    const matches = text.match('Your final grade in the class is a (.*)');
-                    if (matches.length > 1) {
-                      finalLetter = matches[1];
-                    }
-                  });
-
-                  callback(null, { className, grades, finalLetter, finalPercent });
+                  }
                 });
+
+                // Find the final grade, if it exists
+                let finalLetter = undefined;
+                $('p').each((i, elem) => {
+                  const text = $(elem).text();
+                  const matches = text.match('Your final grade in the class is a (.*)');
+                  if (matches && matches.length > 1) {
+                    finalLetter = matches[1];
+                  }
+                });
+
+                callback(null, { className, grades, finalLetter, finalPercent });
               }
             });
         }, (err, results) => {
@@ -118,7 +114,7 @@ class UMDCSGradesScraper extends Scraper {
         const oldPercent = oldClassData.finalPercent ? oldClassData.finalPercent : 'N/A';
         const newPercent = newClassData.finalPercent ? newClassData.finalPercent : 'N/A';
         classChanges.push(
-          `<em>Your total grade has changed from ${oldPercent}% to ${newPercent}%.<em>`);
+          `<em>Your total grade has changed from ${oldPercent}% to ${newPercent}%.</em>`);
       }
 
       let i = 0;

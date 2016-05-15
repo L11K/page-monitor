@@ -3,6 +3,8 @@ const SparkPost = require('sparkpost');
 const sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 const domain = process.env.SPARKPOST_DOMAIN || process.env.SPARKPOST_SANDBOX_DOMAIN;
 
+const SKIP_EMAIL = false;
+
 class Scraper {
 
   // Methods to implement in subclasses:
@@ -15,6 +17,11 @@ class Scraper {
   }
 
   static sendEmail(subject, body) {
+    if (SKIP_EMAIL) {
+      console.log(subject);
+      console.log(body);
+      return;
+    }
     const email = process.env.EMAIL_ADDRESS;
     sp.transmissions.send({
       transmissionBody: {
