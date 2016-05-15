@@ -133,8 +133,9 @@ class UMDCSGradesScraper extends Scraper {
             oldGrade.score !== newGrade.score ||
             oldGrade.maxscore !== newGrade.maxscore) {
             classChanges.push(
-              `${oldGrade.title} ${oldGrade.score}/${oldGrade.maxscore} =>
-${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
+              // eslint-disable-next-line max-len
+              `${oldGrade.title} ${oldGrade.score}/${oldGrade.maxscore} => ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`
+            );
           }
         } else {
           classChanges.push(`New: ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
