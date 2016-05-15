@@ -2,8 +2,9 @@ const Scraper = require('./Scraper');
 const cheerio = require('cheerio');
 
 class TestudoGrades extends Scraper {
-  constructor() {
-    super();
+
+  constructor(notifications) {
+    super(notifications);
     this.name = 'Testudo Grades';
   }
 

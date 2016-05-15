@@ -6,8 +6,8 @@ const cheerio = require('cheerio');
 // https://grades.cs.umd.edu
 class UMDCSGradesScraper extends Scraper {
 
-  constructor() {
-    super();
+  constructor(notifications) {
+    super(notifications);
     this.name = 'UMD CS Grades';
   }
 

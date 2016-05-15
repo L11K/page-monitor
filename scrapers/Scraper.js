@@ -4,8 +4,6 @@ const sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 const domain = process.env.SPARKPOST_DOMAIN || process.env.SPARKPOST_SANDBOX_DOMAIN;
 const ScraperData = require(`${__dirname}/../models/ScraperData`);
 
-const SKIP_EMAIL = true;
-
 class Scraper {
 
   // Methods to implement in subclasses:
@@ -28,13 +26,14 @@ class Scraper {
     return { subject, body };
   }
 
-  constructor() {
+  constructor(notifications) {
     this.name = 'Scraper';
     this.agent = request.agent();
+    this.notifications = notifications || [];
   }
 
   static sendEmail(subject, body) {
-    if (SKIP_EMAIL) {
+    if (this.notifications.indexOf('email') === -1) {
       console.log(subject);
       console.log(body);
       return;
@@ -135,7 +134,7 @@ class Scraper {
             const { subject, body } = this.formatEmail(diff);
             Scraper.sendEmail(subject, body);
           } else {
-            console.log('No differences found.');
+            console.log(`No differences found. (${this.name})`);
           }
           callback();
         });
