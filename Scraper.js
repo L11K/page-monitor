@@ -1,4 +1,7 @@
 const request = require('superagent');
+const SparkPost = require('sparkpost');
+const sp = new SparkPost(process.env.SPARKPOST_API_KEY);
+const domain = process.env.SPARKPOST_DOMAIN || process.env.SPARKPOST_SANDBOX_DOMAIN;
 
 class Scraper {
 
@@ -12,9 +15,26 @@ class Scraper {
   }
 
   static sendEmail(subject, body) {
-    console.log('Fake email:');
+    console.log('Sending email:');
     console.log(subject);
     console.log(body);
+    const email = process.env.EMAIL_ADDRESS;
+    sp.transmissions.send({
+      transmissionBody: {
+        content: {
+          from: `page-monitor@${domain}`,
+          subject,
+          html: `<html><body style="white-space: pre-wrap;">${body}</body></html>`,
+        },
+        recipients: [{ address: email }],
+      },
+    }, (err, apiResponse) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(apiResponse.body);
+      }
+    });
   }
 
   static report(error) {
