@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGOOSE_URI || 'mongodb://localhost/page-monitor');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/page-monitor');
 mongoose.connection.on('error', (err) => {
   console.log(err);
 });
