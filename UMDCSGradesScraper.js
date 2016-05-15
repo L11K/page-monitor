@@ -109,7 +109,7 @@ class UMDCSGradesScraper extends Scraper {
         const oldLetterGrade = oldClassData.finalLetter ? oldClassData.finalLetter : 'N/A';
         const newLetterGrade = newClassData.finalLetter ? newClassData.finalLetter : 'N/A';
         classChanges.push(
-          `Your final grade has changed from "${oldLetterGrade}" to "${newLetterGrade}".`);
+          `<em>Your final grade has changed from "${oldLetterGrade}" to "${newLetterGrade}".</em>`);
       }
 
       // Check if the final percent changed
@@ -117,7 +117,8 @@ class UMDCSGradesScraper extends Scraper {
         newClassData.finalPercent !== oldClassData.finalPercent) {
         const oldPercent = oldClassData.finalPercent ? oldClassData.finalPercent : 'N/A';
         const newPercent = newClassData.finalPercent ? newClassData.finalPercent : 'N/A';
-        classChanges.push(`Your total grade has changed from ${oldPercent}% to ${newPercent}%.`);
+        classChanges.push(
+          `<em>Your total grade has changed from ${oldPercent}% to ${newPercent}%.<em>`);
       }
 
       let i = 0;

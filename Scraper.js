@@ -15,9 +15,6 @@ class Scraper {
   }
 
   static sendEmail(subject, body) {
-    console.log('Sending email:');
-    console.log(subject);
-    console.log(body);
     const email = process.env.EMAIL_ADDRESS;
     sp.transmissions.send({
       transmissionBody: {
@@ -30,7 +27,7 @@ class Scraper {
       },
     }, (err, apiResponse) => {
       if (err) {
-        console.log(err);
+        Scraper.report(err);
       } else {
         console.log(apiResponse.body);
       }

@@ -26,13 +26,6 @@
 // If login does not work, send warning email once
 
 // Database
-- User Data
-	- Notifications
-		- email: [email]
-	- Keys:
-		- mailgun: [mailgun key]
-	- Logins
-		- UMD: [directory ID, password, didFail, dateSet]
 - Scraped Data
 	- [Script Name]
 		- Last Successful Request
