@@ -6,6 +6,11 @@ const cheerio = require('cheerio');
 // https://grades.cs.umd.edu
 class UMDCSGradesScraper extends Scraper {
 
+  constructor() {
+    super();
+    this.name = 'UMD CS Grades';
+  }
+
   // Login to the UMD CS grade server
   login(callback) {
     const umdLogin = UMDCSGradesScraper.getUMDLogin();
@@ -97,8 +102,8 @@ class UMDCSGradesScraper extends Scraper {
     const changes = {};
     async.each(Object.keys(newData), (className) => {
       const classChanges = [];
-      const oldClassData = oldData[className] ? oldData[className] : {};
-      const newClassData = newData[className] ? newData[className] : {};
+      const oldClassData = className in oldData ? oldData[className] : {};
+      const newClassData = className in newData ? newData[className] : {};
       // Check if the final grade changed
       if (newClassData.finalLetter && !oldClassData.finalLetter ||
         newClassData.finalLetter !== oldClassData.finalLetter) {
@@ -134,8 +139,9 @@ ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
         }
         i++;
       }
-
-      changes[className] = classChanges;
+      if (classChanges.length > 0) {
+        changes[className] = classChanges;
+      }
     });
 
     return changes;
@@ -160,7 +166,6 @@ ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
   }
 }
 
-UMDCSGradesScraper.name = 'UMD CS Grades';
 UMDCSGradesScraper.urls = {
   login: 'https://grades.cs.umd.edu/classWeb/login.cgi',
   classPage: 'https://grades.cs.umd.edu/classWeb/',

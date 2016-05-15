@@ -2,8 +2,9 @@ const request = require('superagent');
 const SparkPost = require('sparkpost');
 const sp = new SparkPost(process.env.SPARKPOST_API_KEY);
 const domain = process.env.SPARKPOST_DOMAIN || process.env.SPARKPOST_SANDBOX_DOMAIN;
+const ScraperData = require(`${__dirname}/../models/ScraperData`);
 
-const SKIP_EMAIL = false;
+const SKIP_EMAIL = true;
 
 class Scraper {
 
@@ -13,6 +14,7 @@ class Scraper {
   // diff(oldData, newData) {}
 
   constructor() {
+    this.name = 'Scraper';
     this.agent = request.agent();
   }
 
@@ -23,6 +25,7 @@ class Scraper {
       return;
     }
     const email = process.env.EMAIL_ADDRESS;
+    console.log(`Sending email [${subject}] to: ${email}`);
     sp.transmissions.send({
       transmissionBody: {
         content: {
@@ -34,14 +37,14 @@ class Scraper {
       },
     }, (err, apiResponse) => {
       if (err) {
-        Scraper.report(err);
+        this.report(err);
       } else {
         console.log(apiResponse.body);
       }
     });
   }
 
-  static report(error) {
+  report(error) {
     console.error(error);
   }
 
@@ -59,19 +62,58 @@ class Scraper {
     };
   }
 
-  run() {
-    const oldData = {};
-    this.getData((err, newData) => {
+  // Query MongoDB to get the old scraped data
+  getOldData(callback) {
+    ScraperData.findOne({ scraper: this.name }).lean().exec((err, obj) => {
       if (err) {
-        Scraper.report(err);
+        callback(err, {});
+      } else {
+        callback(null, obj || {
+          oldData: {},
+        });
+      }
+    });
+  }
+
+  // Write new data into MongoDB
+  writeNewData(newData, callback) {
+    const scrapedData = ScraperData({
+      scraper: this.name,
+      oldData: newData,
+    });
+
+    scrapedData.save((err) => {
+      callback(err);
+    });
+  }
+
+  run(callback) {
+    this.getOldData((err, { oldData }) => {
+      if (err) {
+        this.report(err);
       }
 
-      const diff = this.diff(oldData, newData);
-      // console.log(diff);
-      if (Object.keys(diff) !== 0) {
-        const { subject, body } = this.formatEmail(diff);
-        Scraper.sendEmail(subject, body);
-      }
+      this.getData((err, newData) => {
+        if (err) {
+          this.report(err);
+        }
+
+        this.writeNewData(newData, (err) => {
+          if (err) {
+            this.report(err);
+          }
+
+          const diff = this.diff(oldData, newData);
+          // console.log(diff);
+          if (Object.keys(diff) > 0) {
+            const { subject, body } = this.formatEmail(diff);
+            Scraper.sendEmail(subject, body);
+          } else {
+            console.log('No differences found.');
+          }
+          callback();
+        });
+      });
     });
   }
 }
