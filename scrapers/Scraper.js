@@ -9,9 +9,24 @@ const SKIP_EMAIL = true;
 class Scraper {
 
   // Methods to implement in subclasses:
-  // login(callback) {}
-  // getData(callback) {}
-  // diff(oldData, newData) {}
+  login(callback) {
+    callback(null);
+  }
+
+  getData(callback) {
+    callback(null, {});
+  }
+
+  diff(oldData, newData, callback) {
+    callback(null, {});
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  formatEmail(diff) {
+    const subject = 'New Scraper Data';
+    const body = '';
+    return { subject, body };
+  }
 
   constructor() {
     this.name = 'Scraper';
@@ -115,19 +130,14 @@ class Scraper {
             this.report(err);
           }
 
-          this.diff(oldData, newData, (err, diff) => {
-            if (err) {
-              this.report(err);
-            }
-
-            if (Object.keys(diff).length > 0) {
-              const { subject, body } = this.formatEmail(diff);
-              Scraper.sendEmail(subject, body);
-            } else {
-              console.log('No differences found.');
-            }
-            callback();
-          });
+          const diff = this.diff(oldData, newData);
+          if (Object.keys(diff).length > 0) {
+            const { subject, body } = this.formatEmail(diff);
+            Scraper.sendEmail(subject, body);
+          } else {
+            console.log('No differences found.');
+          }
+          callback();
         });
       });
     });

@@ -13,7 +13,7 @@ class UMDCSGradesScraper extends Scraper {
 
   // Login to the UMD CS grade server
   login(callback) {
-    const umdLogin = UMDCSGradesScraper.getUMDLogin();
+    const umdLogin = Scraper.getUMDLogin();
     this.agent
       .post(UMDCSGradesScraper.urls.login)
       .send({
@@ -98,9 +98,9 @@ class UMDCSGradesScraper extends Scraper {
 
   // Check if the data scraped from the CS grade server has changed
   // Format the changes with messages to be sent in a notification
-  diff(oldData, newData, callback) {
+  diff(oldData, newData) {
     const changes = {};
-    async.each(Object.keys(newData), (className, cb) => {
+    Object.keys(newData).forEach((className) => {
       const classChanges = [];
       const oldClassData = className in oldData ? oldData[className] : {};
       const newClassData = className in newData ? newData[className] : {};
@@ -144,10 +144,8 @@ ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
       if (classChanges.length > 0) {
         changes[className] = classChanges;
       }
-      cb();
-    }, (err) => {
-      callback(err, changes);
     });
+    return changes;
   }
 
   // From a diff, create an email message to be sent as a notification

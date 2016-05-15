@@ -7,8 +7,12 @@ mongoose.connection.on('error', (err) => {
 });
 
 const UMDCSGradesScraper = require('./scrapers/UMDCSGradesScraper');
+const TestudoGrades = require('./scrapers/TestudoGrades');
 
-const tester = new UMDCSGradesScraper();
-tester.run(() => {
-  mongoose.connection.close();
+const umdCSGrades = new UMDCSGradesScraper();
+umdCSGrades.run(() => {
+  const testudoGrades = new TestudoGrades();
+  testudoGrades.run(() => {
+    mongoose.connection.close();
+  });
 });
