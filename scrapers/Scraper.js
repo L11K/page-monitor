@@ -32,7 +32,7 @@ class Scraper {
     this.notifications = notifications || [];
   }
 
-  static sendEmail(subject, body) {
+  sendEmail(subject, body) {
     if (this.notifications.indexOf('email') === -1) {
       console.log(subject);
       console.log(body);
@@ -132,7 +132,7 @@ class Scraper {
           const diff = this.diff(oldData, newData);
           if (Object.keys(diff).length > 0) {
             const { subject, body } = this.formatEmail(diff);
-            Scraper.sendEmail(subject, body);
+            this.sendEmail(subject, body);
           } else {
             console.log(`No differences found. (${this.name})`);
           }
