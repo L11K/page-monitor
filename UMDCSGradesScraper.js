@@ -143,6 +143,24 @@ ${newGrade.title} ${newGrade.score}/${newGrade.maxscore}`);
 
     return changes;
   }
+
+  // From a diff, create an email message to be sent as a notification
+  formatEmail(diff) {
+    let classes = Object.keys(diff).join(',');
+    if (Object.keys(diff).length > 2) {
+      classes = `${Object.keys(diff).slice(0, 2).join(',')}...`;
+    }
+
+    const subject = `CS Grade Server (${classes})`;
+    let body = 'The following changes have been found:\n';
+    Object.keys(diff).forEach((className) => {
+      body += `<b>${className}</b>:\n`;
+      diff[className].forEach((diffText) => {
+        body += `${diffText}\n`;
+      });
+    });
+    return { subject, body };
+  }
 }
 
 UMDCSGradesScraper.name = 'UMD CS Grades';

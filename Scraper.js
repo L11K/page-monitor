@@ -43,9 +43,10 @@ class Scraper {
       }
 
       const diff = this.diff(oldData, newData);
-      console.log(diff);
-      if (Object.keys(diff) === 0) {
-        this.sendEmail(diff);
+      // console.log(diff);
+      if (Object.keys(diff) !== 0) {
+        const { subject, body } = this.formatEmail(diff);
+        Scraper.sendEmail(subject, body);
       }
     });
   }

@@ -34,6 +34,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.4",
     "cheerio": "^0.20.0",
+    "htmltidy": "0.0.6",
     "superagent": "^1.8.3"
   }
 }
