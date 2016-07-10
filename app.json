@@ -1,0 +1,47 @@
+{
+  "name": "UMD CS Grade Checker",
+  "description": "A web scraper that will detect grade changes from a variety of UMD services.",
+  "repository": "https://github.com/colinking/page-monitor",
+  "logo": "http://www.cs.umd.edu/sites/default/files/logo_top_bottom.png",
+  "keywords": [
+    "scraper",
+    "node",
+    "mongodb",
+    "grades",
+    "umd",
+    "university",
+    "maryland",
+    "md",
+    "university of maryland",
+    "computer science",
+    "cs"
+  ],
+  "env": {
+    "SPARKPOST_API_KEY": {
+      "description": "Secret key for Sparkpost"
+    },
+    "SPARKPOST_DOMAIN": {
+      "description": "Domain that Sparkpost will send from (must be verified)."
+    },
+    "EMAIL_ADDRESS": {
+      "description": "Email to receive grade change notifications to."
+    },
+    "UMD_ID": {
+      "description": "Your UMD ID: Needed to log in to UMD services to perform grade scraping."
+    },
+    "UMD_PASSWORD": {
+      "description": "Your UMD Password: Needed to log in to UMD services to perform grade scraping."
+    }
+  },
+  "addons": [
+    "logentries:le_tryit",
+    "sparkpost:free",
+    "scheduler:standard",
+    "mongolab:sandbox"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
