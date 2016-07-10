@@ -17,20 +17,20 @@
     "cs"
   ],
   "env": {
-    "SPARKPOST_API_KEY": {
-      "description": "Secret key for Sparkpost"
-    },
-    "SPARKPOST_DOMAIN": {
-      "description": "Domain that Sparkpost will send from (must be verified)."
-    },
+    // "SPARKPOST_API_KEY": {
+    //   "description": "Secret key for Sparkpost"
+    // },
+    // "SPARKPOST_DOMAIN": {
+    //   "description": "Domain that Sparkpost will send from (must be verified)."
+    // },
     "EMAIL_ADDRESS": {
-      "description": "Email to receive grade change notifications to."
+      "description": "An email to send grade change notifications to."
     },
     "UMD_ID": {
-      "description": "Your UMD ID: Needed to log in to UMD services to perform grade scraping."
+      "description": "Your UMD ID."
     },
     "UMD_PASSWORD": {
-      "description": "Your UMD Password: Needed to log in to UMD services to perform grade scraping."
+      "description": "Your UMD Password (Needed to log in to UMD services to perform grade scraping.)"
     }
   },
   "addons": [
