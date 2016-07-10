@@ -17,12 +17,6 @@
     "cs"
   ],
   "env": {
-    // "SPARKPOST_API_KEY": {
-    //   "description": "Secret key for Sparkpost"
-    // },
-    // "SPARKPOST_DOMAIN": {
-    //   "description": "Domain that Sparkpost will send from (must be verified)."
-    // },
     "EMAIL_ADDRESS": {
       "description": "An email to send grade change notifications to."
     },
