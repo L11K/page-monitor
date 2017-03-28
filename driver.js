@@ -18,8 +18,8 @@ const TestudoGrades = require('./scrapers/TestudoGrades');
 
 const umdCSGrades = new UMDCSGradesScraper(notifications);
 umdCSGrades.run(() => {
-  const testudoGrades = new TestudoGrades(notifications);
-  testudoGrades.run(() => {
-    mongoose.connection.close();
-  });
+  // const testudoGrades = new TestudoGrades(notifications);
+  // testudoGrades.run(() => {
+  mongoose.connection.close();
+  // });
 });
